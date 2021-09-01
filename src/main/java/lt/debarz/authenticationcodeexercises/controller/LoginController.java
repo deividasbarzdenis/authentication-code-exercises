@@ -28,6 +28,12 @@ import static org.springframework.security.web.context.HttpSessionSecurityContex
 @Controller
 public class LoginController {
 
+    private static final String LOGIN_ERROR_MSG = "Incorrect user / password";
+    private static final String LOGIN_ERROR_ATTR = "loginError";
+
+    private static final String DUMMY_PASSWORD_HASH =
+            "$argon2id$v=19$m=4096,t=10,p=1$SD8m0Rk28mlhyVm688wIRA$9ltWxKhQTrD0MKK3tSNHrKyHjkR9dH//nLa6LlD8MHI";
+
     @Autowired
     private UserDetailsService userService;
 
@@ -41,6 +47,8 @@ public class LoginController {
 
     @PostMapping("/login")
     public String loginProcess(HttpServletRequest req, @ModelAttribute("loginForm") LoginForm loginForm, Model model) {
+        long startTime = System.nanoTime();
+
         String username = loginForm.getUsername();
         String password = loginForm.getPassword();
 
@@ -52,12 +60,20 @@ public class LoginController {
         } catch (UsernameNotFoundException ex) { }
 
         if (user == null) {
-            model.addAttribute("loginError", "Incorrect user/password");
+            // dummy step to make the response time similar to the case of incorrect password
+            passwordEncoder.matches(password, DUMMY_PASSWORD_HASH);
+            model.addAttribute(LOGIN_ERROR_ATTR, LOGIN_ERROR_MSG);
+
+            long endTime = System.nanoTime();
+            log.info("Authentication end - Duration = {} ms", (double)(endTime - startTime)/1000000);
             return "login";
         }
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            model.addAttribute("loginError", "Incorrect user/password");
+            model.addAttribute(LOGIN_ERROR_ATTR, LOGIN_ERROR_MSG);
+
+            long endTime = System.nanoTime();
+            log.info("Authentication end - Duration = {} ms", (double)(endTime - startTime)/1000000);
             return "login";
         }
 
