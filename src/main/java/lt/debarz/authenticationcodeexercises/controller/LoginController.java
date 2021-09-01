@@ -52,12 +52,12 @@ public class LoginController {
         } catch (UsernameNotFoundException ex) { }
 
         if (user == null) {
-            model.addAttribute("loginError", "Username not found");
+            model.addAttribute("loginError", "Incorrect user/password");
             return "login";
         }
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            model.addAttribute("loginError", "Wrong password");
+            model.addAttribute("loginError", "Incorrect user/password");
             return "login";
         }
 
