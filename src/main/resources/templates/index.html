@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+      layout:decorate="~{fragments/layout}">
+<head>
+    <title>Index</title>
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <h1>Hello Secure Code Exercise</h1>
+        <p>This is an unsecured page, but you can access the secured pages after authenticating.</p>
+        <ul>
+            <li>Go to the <a href="/login" th:href="@{/login}">login page</a></li>
+            <li>Go to the <a href="/user" th:href="@{/user}">secured page for USER role</a></li>
+            <li>Go to the <a href="/admin" th:href="@{/admin}">secured page for ADMIN role</a></li>
+        </ul>
+
+    </div>
+    <div class="row" sec:authorize="isAuthenticated()">
+        <div class="col">
+            Logged User: [<span sec:authentication="name"></span>] |
+            Roles: <span sec:authentication="principal.authorities"></span> |
+            <form th:action="@{/logout}" method="post" style="display:inline"><input type="submit" value="Logout"/></form>
+        </div>
+    </div>
+
+
+</body>
+</html>
