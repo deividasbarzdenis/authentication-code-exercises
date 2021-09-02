@@ -6,3 +6,11 @@ spring:
     password: sa
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: none
+
+app:
+  recaptcha:
+    verify-url: https://www.google.com/recaptcha/api/siteverify
+    site-key: 6Lexxj0cAAAAANTux6m5ERA_1mb6xRX8iiplKeIE
+    secret-key: 6Lexxj0cAAAAAJ7PqcWViRxQ9XY8VePEHt_4o_d4
