@@ -60,6 +60,8 @@ public class LoginController {
         } catch (UsernameNotFoundException ex) { }
 
         if (user == null) {
+            log.warn("login failed - unknown user - ip={}, user={}", req.getRemoteAddr(), username);
+
             // dummy step to make the response time similar to the case of incorrect password
             passwordEncoder.matches(password, DUMMY_PASSWORD_HASH);
             model.addAttribute(LOGIN_ERROR_ATTR, LOGIN_ERROR_MSG);
@@ -70,12 +72,16 @@ public class LoginController {
         }
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
+            log.warn("login failed - incorrect password - ip={}, user={}", req.getRemoteAddr(), username);
+
             model.addAttribute(LOGIN_ERROR_ATTR, LOGIN_ERROR_MSG);
 
             long endTime = System.nanoTime();
             log.info("Authentication end - Duration = {} ms", (double)(endTime - startTime)/1000000);
             return "login";
         }
+
+        log.info("successful login - ip={}, user={}", req.getRemoteAddr(), username);
 
         // set up login session
         Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
